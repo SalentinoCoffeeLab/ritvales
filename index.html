@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotización SLT14 — Salentino x Breakfast Live</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --shadow-black: #020102;
+    --greenhouse: #82FD47;
+    --salentino-orange: #E87722;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --glass-bg: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.10);
+    --glass-highlight: rgba(255, 255, 255, 0.15);
+    --glass-shadow: rgba(0, 0, 0, 0.4);
+    --green-glow: rgba(130, 253, 71, 0.12);
+    --border-color: rgba(130, 253, 71, 0.15);
+    --text-primary: #EFFFFE;
+    --text-secondary: rgba(239, 255, 254, 0.55);
+    --radius: 20px;
+    --radius-sm: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--shadow-black);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── AMBIENT BACKGROUND ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 10%, rgba(130, 253, 71, 0.06), transparent),
+      radial-gradient(ellipse 500px 500px at 80% 60%, rgba(34, 79, 209, 0.05), transparent),
+      radial-gradient(ellipse 400px 300px at 50% 90%, rgba(232, 119, 34, 0.04), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      linear-gradient(rgba(130, 253, 71, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(130, 253, 71, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── LIQUID GLASS MIXIN ─── */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px) saturate(1.4);
+    -webkit-backdrop-filter: blur(40px) saturate(1.4);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    box-shadow:
+      0 4px 24px var(--glass-shadow),
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 0 0.5px rgba(255,255,255,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .glass:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 8px 32px var(--glass-shadow),
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 0 0.5px rgba(255,255,255,0.08);
+  }
+
+  .glass-sm {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px) saturate(1.3);
+    -webkit-backdrop-filter: blur(30px) saturate(1.3);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    box-shadow:
+      0 2px 16px var(--glass-shadow),
+      inset 0 1px 0 var(--glass-highlight);
+  }
+
+  .glass-green {
+    background: rgba(130, 253, 71, 0.05);
+    border-color: rgba(130, 253, 71, 0.15);
+    box-shadow:
+      0 4px 24px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(130, 253, 71, 0.1),
+      0 0 40px rgba(130, 253, 71, 0.03);
+  }
+
+  /* ─── PAGE ─── */
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 40px;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+    padding: 24px 28px;
+  }
+
+  .logo-salentino img {
+    height: 40px;
+  }
+
+  .header-meta {
+    text-align: right;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.9;
+  }
+
+  .header-meta .doc-id {
+    font-size: 13px;
+    color: var(--greenhouse);
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    margin-bottom: 48px;
+    padding: 40px 36px;
+  }
+
+  .hero h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 span {
+    color: var(--greenhouse);
+  }
+
+  .hero .subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    letter-spacing: 0.3px;
+  }
+
+  .hero .event-badge {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 8px 18px;
+    border: 1px solid rgba(130, 253, 71, 0.3);
+    border-radius: 100px;
+    color: var(--greenhouse);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: rgba(130, 253, 71, 0.06);
+    backdrop-filter: blur(10px);
+  }
+
+  /* ─── CLIENT INFO ─── */
+  .client-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+
+  .info-card {
+    padding: 24px 24px 24px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 0;
+    bottom: 16px;
+    width: 3px;
+    background: var(--greenhouse);
+    border-radius: 2px;
+    box-shadow: 0 0 12px rgba(130, 253, 71, 0.3);
+  }
+
+  .info-card .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--greenhouse);
+    margin-bottom: 12px;
+  }
+
+  .info-card p {
+    font-size: 13px;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+
+  .info-card .detail {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* ─── SECTION TITLES ─── */
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--greenhouse);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  /* ─── SCOPE ─── */
+  .scope { margin-bottom: 48px; }
+
+  .scope-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .scope-item {
+    padding: 24px 16px;
+    text-align: center;
+  }
+
+  .scope-item .number {
+    font-family: 'Space Mono', monospace;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--greenhouse);
+    display: block;
+    margin-bottom: 6px;
+    text-shadow: 0 0 20px rgba(130, 253, 71, 0.2);
+  }
+
+  .scope-item .unit {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .scope-note {
+    display: block;
+    font-size: 9px;
+    color: rgba(130, 253, 71, 0.7);
+    margin-top: 10px;
+    line-height: 1.4;
+    text-transform: none;
+    letter-spacing: 0;
+    font-style: italic;
+  }
+
+  /* ─── EXPERIENCE ─── */
+  .experience { margin-bottom: 48px; }
+
+  .experience-content {
+    padding: 32px;
+  }
+
+  .experience-content h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+  }
+
+  .experience-content p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.75;
+  }
+
+  .experience-list {
+    list-style: none;
+    margin-top: 20px;
+  }
+
+  .experience-list li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .experience-list li:last-child { border-bottom: none; }
+
+  .experience-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--greenhouse);
+    box-shadow: 0 0 8px rgba(130, 253, 71, 0.4);
+    flex-shrink: 0;
+  }
+
+  /* ─── PRICING TABLE ─── */
+  .pricing { margin-bottom: 48px; }
+
+  .pricing-wrapper {
+    padding: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pricing-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+    min-width: 560px;
+  }
+
+  .pricing-table thead th {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--greenhouse);
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(130, 253, 71, 0.15);
+    background: rgba(130, 253, 71, 0.03);
+  }
+
+  .pricing-table thead th:first-child { border-radius: 12px 0 0 0; }
+  .pricing-table thead th:last-child { border-radius: 0 12px 0 0; text-align: right; }
+  .pricing-table thead th:nth-child(2),
+  .pricing-table thead th:nth-child(3) { text-align: center; }
+
+  .pricing-table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: var(--text-primary);
+    vertical-align: top;
+  }
+
+  .pricing-table tbody td:last-child {
+    text-align: right;
+    font-family: 'Space Mono', monospace;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .pricing-table tbody td:nth-child(2),
+  .pricing-table tbody td:nth-child(3) {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-secondary);
+  }
+
+  .pricing-table tbody tr:last-child td:first-child { border-radius: 0 0 0 12px; }
+  .pricing-table tbody tr:last-child td:last-child { border-radius: 0 0 12px 0; }
+
+  .item-name { font-weight: 500; font-size: 13px; }
+  .item-detail { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* ─── TOTALS ─── */
+  .totals {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .totals-box {
+    width: 320px;
+    padding: 24px;
+  }
+
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 13px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-secondary);
+  }
+
+  .totals-row.total {
+    border-top: 1px solid rgba(130, 253, 71, 0.2);
+    margin-top: 8px;
+    padding-top: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--greenhouse);
+  }
+
+  .totals-row.total span:last-child {
+    font-size: 20px;
+    text-shadow: 0 0 20px rgba(130, 253, 71, 0.25);
+  }
+
+  /* ─── CONDITIONS ─── */
+  .conditions { margin-bottom: 48px; }
+
+  .conditions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .condition-card {
+    padding: 20px;
+  }
+
+  .condition-card .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--greenhouse);
+    margin-bottom: 8px;
+  }
+
+  .condition-card p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    margin-top: 48px;
+    padding: 28px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-brand {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 2;
+  }
+
+  .footer-brand strong {
+    color: var(--text-primary);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-brand a {
+    text-decoration: none;
+  }
+
+  .footer-brand a.email-green {
+    color: var(--greenhouse);
+  }
+
+  .footer-emblem {
+    display: flex;
+    align-items: center;
+  }
+
+  .emblem-img {
+    width: 130px;
+    height: auto;
+    opacity: 0.9;
+  }
+
+  /* ─── MOBILE RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .page {
+      padding: 24px 16px;
+    }
+
+    .header {
+      padding: 20px;
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .header-meta {
+      text-align: left;
+    }
+
+    .logo-salentino img {
+      height: 32px;
+    }
+
+    .hero {
+      padding: 28px 24px;
+    }
+
+    .hero h1 {
+      font-size: 24px;
+    }
+
+    .hero .subtitle {
+      font-size: 13px;
+    }
+
+    .client-info {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .scope-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .scope-item {
+      padding: 18px 12px;
+    }
+
+    .scope-item .number {
+      font-size: 24px;
+    }
+
+    .experience-content {
+      padding: 24px 20px;
+    }
+
+    .pricing-wrapper {
+      margin: 0 -4px;
+      padding: 4px;
+    }
+
+    .totals {
+      justify-content: stretch;
+    }
+
+    .totals-box {
+      width: 100%;
+    }
+
+    .conditions-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .footer {
+      flex-direction: column;
+      gap: 24px;
+      align-items: center;
+      text-align: center;
+      padding: 24px 20px;
+    }
+
+    .footer-brand {
+      text-align: center;
+    }
+
+    .emblem-img {
+      width: 110px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .hero h1 {
+      font-size: 20px;
+    }
+
+    .scope-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .scope-item .number {
+      font-size: 22px;
+    }
+
+    .pricing-table {
+      font-size: 12px;
+    }
+
+    .totals-row.total {
+      font-size: 14px;
+    }
+
+    .totals-row.total span:last-child {
+      font-size: 17px;
+    }
+  }
+
+  /* ─── PRINT ─── */
+  @media print {
+    body { background: #000; }
+    body::before, body::after { display: none; }
+    .page { padding: 20px; max-width: 100%; }
+    .glass, .glass-sm, .glass-green { backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .glass:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header glass">
+    <div class="logo-salentino">
+      <img src="img/logo-salentino.png" alt="Salentino Coffee Lab">
+    </div>
+    <div class="header-meta">
+      <div class="doc-id">SLT14</div>
+      Fecha: 02 / Oct / 2026<br>
+      Vigencia: 07 / Oct / 2026<br>
+      NIT 901933865-6
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero glass glass-green">
+    <h1>Catering de Cafe<br><span>Breakfast Live</span></h1>
+    <p class="subtitle">Experiencia de cafe de especialidad en camerinos &mdash; Ritvales x Salentino</p>
+    <div class="event-badge">Medellin &middot; 2 dias &middot; camerinos</div>
+  </section>
+
+  <!-- CLIENT INFO -->
+  <section class="client-info">
+    <div class="info-card glass-sm">
+      <div class="label">Cliente</div>
+      <p><strong>BREAKFAST TBL SAS</strong></p>
+      <p class="detail">Calle 5 Sur # 43C 80</p>
+      <p class="detail">Medellin</p>
+      <p class="detail">NIT 901804480</p>
+    </div>
+    <div class="info-card glass-sm">
+      <div class="label">Proveedor</div>
+      <p><strong>SALENTINO COFFEE LAB SAS</strong></p>
+      <p class="detail">CL 36 D Sur 27 D 166 &mdash; Envigado</p>
+      <p class="detail">+57 312 841 2082</p>
+      <p class="detail">admin@salentino.online</p>
+    </div>
+  </section>
+
+  <!-- SCOPE -->
+  <section class="scope">
+    <div class="section-title">Alcance del servicio</div>
+    <div class="scope-grid">
+      <div class="scope-item glass-sm">
+        <span class="number">2</span>
+        <span class="unit">Dias de evento</span>
+      </div>
+      <div class="scope-item glass-sm">
+        <span class="number">8h</span>
+        <span class="unit">Jornada / dia</span>
+      </div>
+      <div class="scope-item glass-sm">
+        <span class="number">150</span>
+        <span class="unit">Personas / dia</span>
+      </div>
+      <div class="scope-item glass-sm">
+        <span class="number">3</span>
+        <span class="unit">Baristas</span>
+      </div>
+      <div class="scope-item glass-sm glass-green">
+        <span class="number">200+</span>
+        <span class="unit">Bebidas / dia</span>
+        <span class="scope-note">*Monto fijo. Si se supera la cantidad base, no se cobra extra.</span>
+      </div>
+      <div class="scope-item glass-sm">
+        <span class="number">1</span>
+        <span class="unit">Montaje completo</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="experience">
+    <div class="section-title">La experiencia</div>
+    <div class="experience-content glass">
+      <h3>Cafe de especialidad en el backstage</h3>
+      <p>
+        Salentino instala una barra de filtrados de cafe de especialidad directamente en los camerinos del Breakfast Live.
+        Durante 2 dias completos, el equipo de produccion, artistas y crew tendran acceso ilimitado a bebidas
+        calientes y frias preparadas por nuestros baristas.
+      </p>
+      <p>
+        El servicio opera en flujo continuo durante jornadas de 8 horas, asegurando que las 150 personas
+        promedio por dia siempre encuentren cafe fresco y listo.
+      </p>
+      <ul class="experience-list">
+        <li>Barra de filtrados de cafe de especialidad</li>
+        <li>Bebidas frias con base en cold brew</li>
+        <li>Cafe colombiano de diferentes regiones de Colombia</li>
+        <li>Servicio continuo sin interrupciones durante toda la jornada</li>
+        <li>Montaje y desmontaje completo de la barra de cafe</li>
+        <li>Equipo profesional: molinos, metodos de filtrado, mise en place completo</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing">
+    <div class="section-title">Detalle economico</div>
+    <div class="pricing-wrapper glass">
+      <table class="pricing-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Cant.</th>
+            <th>Vr. Unitario</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="item-name">Staff Baristas</div>
+              <div class="item-detail">3 baristas &times; 2 dias &times; jornada de 8h</div>
+            </td>
+            <td>25</td>
+            <td>$83,333</td>
+            <td>$2,083,325</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="item-name">Bebidas Frias</div>
+              <div class="item-detail">Cold brew y bebidas frias con base en cold brew</div>
+            </td>
+            <td>200</td>
+            <td>$16,000</td>
+            <td>$3,200,000</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="item-name">Bebidas Calientes</div>
+              <div class="item-detail">Barra de filtrados de cafe de especialidad</div>
+            </td>
+            <td>200</td>
+            <td>$7,000</td>
+            <td>$1,400,000</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="item-name">Transporte</div>
+              <div class="item-detail">Equipos, insumos y montaje a locacion del evento</div>
+            </td>
+            <td>1</td>
+            <td>$400,000</td>
+            <td>$400,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="totals">
+      <div class="totals-box glass-sm">
+        <div class="totals-row">
+          <span>Subtotal</span>
+          <span>$7,083,325</span>
+        </div>
+        <div class="totals-row">
+          <span>INC (8%)</span>
+          <span>$534,666</span>
+        </div>
+        <div class="totals-row total">
+          <span>Total</span>
+          <span>$7,617,991</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONDITIONS -->
+  <section class="conditions">
+    <div class="section-title">Condiciones</div>
+    <div class="conditions-grid">
+      <div class="condition-card glass-sm">
+        <div class="label">Forma de pago</div>
+        <p>50% anticipo para confirmar reserva.<br>50% restante el dia del evento.</p>
+      </div>
+      <div class="condition-card glass-sm">
+        <div class="label">Vigencia</div>
+        <p>Esta cotizacion es valida hasta el 07 de octubre de 2026.</p>
+      </div>
+      <div class="condition-card glass-sm">
+        <div class="label">Incluye</div>
+        <p>Equipos, insumos, vasos, cafe de especialidad, leche, endulzantes, montaje y desmontaje.</p>
+      </div>
+      <div class="condition-card glass-sm">
+        <div class="label">Montaje</div>
+        <p>Se requiere acceso al venue minimo 2 horas antes del inicio del evento para instalacion completa. Se necesitan 2 conexiones electricas de 110V.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer glass">
+    <div class="footer-brand">
+      <strong>Salentino Coffee Lab</strong><br>
+      Envigado, Antioquia<br>
+      <a href="mailto:admin@salentino.online" class="email-green">admin@salentino.online</a><br>
+      +57 312 841 2082
+    </div>
+    <div class="footer-emblem">
+      <img src="img/gorras-emblem.png" alt="Salentino — Greatest of All Time, Timeless Coffee, MDE / COL" class="emblem-img">
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
