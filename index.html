@@ -609,10 +609,22 @@
     }
   }
 
+  /* ─── MATRIX CANVAS ─── */
+  #matrix {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
   /* ─── PRINT ─── */
   @media print {
     body { background: #000; }
     body::before, body::after { display: none; }
+    #matrix { display: none; }
     .page { padding: 20px; max-width: 100%; }
     .glass, .glass-sm, .glass-green { backdrop-filter: none; -webkit-backdrop-filter: none; }
     .glass:hover { transform: none; }
@@ -826,5 +838,76 @@
   </footer>
 
 </div>
-</body>
-</html>
+
+<!-- MATRIX RAIN BACKGROUND -->
+<canvas id="matrix"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ♦◊∞∑∂∆πΩ☕';
+  const charArr = chars.split('');
+  const fontSize = 14;
+  let columns = Math.floor(canvas.width / fontSize);
+  let drops = Array(columns).fill(1);
+
+  // Randomize initial positions so it doesn't start uniform
+  for (let i = 0; i < drops.length; i++) {
+    drops[i] = Math.floor(Math.random() * -canvas.height / fontSize);
+  }
+
+  window.addEventListener('resize', function() {
+    columns = Math.floor(canvas.width / fontSize);
+    drops = Array(columns).fill(1);
+    for (let i = 0; i < drops.length; i++) {
+      drops[i] = Math.floor(Math.random() * -canvas.height / fontSize);
+    }
+  });
+
+  function draw() {
+    // Fade trail
+    ctx.fillStyle = 'rgba(2, 1, 2, 0.06)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = fontSize + 'px "Space Mono", monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const char = charArr[Math.floor(Math.random() * charArr.length)];
+      const x = i * fontSize;
+      const y = drops[i] * fontSize;
+
+      // Lead character: bright green
+      if (Math.random() > 0.5) {
+        ctx.fillStyle = 'rgba(130, 253, 71, 0.9)';
+      } else {
+        ctx.fillStyle = 'rgba(130, 253, 71, 0.35)';
+      }
+
+      // Occasional orange flash (Salentino accent)
+      if (Math.random() > 0.985) {
+        ctx.fillStyle = 'rgba(232, 119, 34, 0.7)';
+      }
+
+      ctx.fillText(char, x, y);
+
+      // Reset drop to top with randomness
+      if (y > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+</script>
